@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Ecommerce | My account</title>
+</head>
+<body class="flex flex-col h-screen">
+    <header th:insert="~{fragments/header :: header }"></header>
+    <div th:insert="~{fragments/sub_header :: sub_header }"></div>
+        <div class="w-full max-w-[1400px] mx-auto flex flex-wrap justify-center lg:justify-between mt-4 md:mt-8">
+            <div class="w-full lg:w-2/12 bg-[#f1f1f1] rounded-md flex flex-col items-start justify-between" style="height: 240px;">
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/account/my-account}" class="font-semibold text-md">My account</a>
+                </div>
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/order/my-orders}" class="font-semibold text-md">My orders</a>
+                </div>
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/wishlist/my-wishlist}" class="font-semibold text-md">My wishlist</a>
+                </div>
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/account/update-information}" class="font-semibold text-md">Account information</a>
+                </div>
+            </div>
+            <div class="w-full lg:w-9/12 mt-6 lg:mt-0">
+                <div class="w-full flex justify-start">
+                    <h1 class="text-2xl md:text-3xl font-semibold">My account</h1>
+                </div>
+                <div class="w-full mt-6 flex flex-wrap">
+                    <div class="w-full py-3 border-b-2 border-[#f1f1f1]">
+                        <h2 class="text-xl md:text-2xl">Account information</h2>
+                    </div>
+                    <div class="w-full lg:w-6/12 my-4">
+                        <div class="w-full flex justify-start">
+                            <h3 class="text-lg font-bold">Contact information</h3>
+                        </div>
+                        <div class="w-full my-4 rounded-md bg-green-500 text-white p-3 flex justify-center" th:if="${msg_success != null}">
+                            <p th:text="${msg_success}" class="text-center"></p>
+                        </div>
+                        <div class="w-full flex flex-wrap justify-start mt-3">
+                            <div class="w-full">
+                                <p th:text="${user.name}"></p>
+                            </div>
+                            <div class="w-full my-1">
+                                <p th:text="${user.email}"></p>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-start">
+                            <div class="w-4/12 flex justify-center" style="border-right: 1px solid #cfcfcf;">
+                                <a th:href="@{/account/update-information}" class="text-[#a6a6a6] underline">Edit</a>
+                            </div>
+                            <div class="w-4/12 flex justify-center">
+                                <a th:href="@{/auth/recover-password}" class="text-[#a6a6a6] underline">Update password</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <footer class="flex justify-center py-10 bg-[#f1f1f1] text-black mt-auto">
+        <p class="font-bold">© 2023 Ricardo Sandoval</p>
+    </footer>
+    <script th:src="@{/js/flowbite.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
+

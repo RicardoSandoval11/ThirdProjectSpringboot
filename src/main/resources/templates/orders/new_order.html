@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Ecommerce | New order</title>
+</head>
+<body class="flex flex-col h-screen">
+    <header th:insert="~{fragments/header :: header }"></header>
+    <div th:insert="~{fragments/sub_header :: sub_header }"></div>
+    <div class="w-full max-w-[1400px] mx-auto flex flex-wrap mt-4 md:mt-8">
+        <div class="w-full flex flex-wrap justify-between items-start" th:unless="${#lists.isEmpty(cart_items)}">
+            <div class="w-full md:w-7/12 flex flex-wrap flex-col">
+                <div class="w-full border-b-2 border-[#f1f1f1] py-2">
+                    <h2 class="text-xl md:text-2xl font-semibold text-center md:text-left">Billing Address</h2>
+                </div>
+                <div class="w-full my-3">
+                    <form th:action="@{/order/save-order}" method="post" class="w-full flex flex-wrap" id="order-form">
+                        <div class="w-full rounded-md p-3 m-2 border-2 border-[#f00] text-[#f00] bg-[#FFD8D8] flex justify-center items-center" style="display: none;" id="empty-fields-alert">
+                            <p class="text-center">Fill al required fields</p>
+                        </div>
+                        <div class="w-full px-2 flex flex-wrap mb-2">
+                            <label for="email_address" class="w-full block mb-2 text-md font-medium text-gray-900">Email address <span class="text-[#f00] text-md">*</span></label>
+                            <input 
+                                type="email" 
+                                id="email_address" 
+                                class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                name="email_address"
+                            >
+                        </div>
+                        <div class="w-full px-2 flex flex-wrap mb-2">
+                            <label for="bill-to" class="w-full block mb-2 text-md font-medium text-gray-900">Bill To <span class="text-[#f00] text-md">*</span></label>
+                            <input 
+                                type="text" 
+                                id="bill-to" 
+                                class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                name="bill_to"
+                            >
+                        </div>
+                        <div class="w-full px-2 flex flex-wrap mb-2">
+                            <label for="arn-bill" class="w-full block mb-2 text-md font-medium text-gray-900">ARN <span class="text-[#f00] text-md">*</span></label>
+                            <input 
+                                type="number" 
+                                id="arn-bill" 
+                                class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                name="arn_bill"
+                            >
+                        </div>
+                        <div class="w-full px-2 flex flex-wrap mb-2">
+                            <label for="payment_method" class="w-full block mb-2 text-md font-medium text-gray-900">Payment method <span class="text-[#f00] text-md">*</span></label>
+                            <select 
+                                name="payment_method" 
+                                id="payment_method"
+                                class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                            >
+                                <option 
+                                    th:each="payment_method : ${payment_methods}"
+                                    th:value="${payment_method.id}" 
+                                    th:text="${payment_method.value}"
+                                >
+                                </option>
+                            </select>
+                        </div>
+                        <div class="w-full px-2 flex flex-wrap mb-2">
+                            <label for="fiscal-address" class="w-full block mb-2 text-md font-medium text-gray-900">Fiscal address</label>
+                            <input 
+                                type="text" 
+                                id="fiscal-address" 
+                                class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                name="fiscal_address"
+                            >
+                        </div>
+                        <div class="w-full border-b-2 border-[#f1f1f1] py-2">
+                            <h2 class="text-xl md:text-2xl font-semibold text-center md:text-left">Delivery information</h2>
+                        </div>
+                        <div class="w-full flex flex-wrap justify-start my-2">
+                            <div class="w-5/12 px-3 mx-1 py-4 rounded-md border-2 border-black hover:border-[#f00] hover:text-[#f00] max-w-[200px]">
+                                <div class="w-full">
+                                    <h3 class="mb-1 font-md font-semibold flex items-center cursor-pointer" id="pick_store-opt"><span class="material-symbols-outlined mr-2" style="font-size: 25px;">store</span> Store Pickup</h3>
+                                </div>
+                                <div class="w-full">
+                                    <p class="text-sm">You can pick it up at your nearest store</p>
+                                </div>
+                            </div>
+                            <div class="w-5/12 mx-1 p-3 rounded-md border-2 border-black hover:border-[#f00] hover:text-[#f00] max-w-[200px]">
+                                <div class="w-full">
+                                    <h3 class="mb-1 font-md font-semibold flex items-center cursor-pointer" id="delivery-opt"><span class="material-symbols-outlined mr-2" style="font-size: 25px;">local_shipping</span> Home delivery</h3>
+                                </div>
+                                <div class="w-full">
+                                    <p class="text-sm">1-2 business days in capital, 3-5 business days inside</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full flex-wrap my-3" id="pickup-fields" style="display: none;">
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="pickup-field-firstname" class="w-full block mb-2 text-md font-medium text-gray-900">First name <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="pickup-field-firstname" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="first_name"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="pickup-field-lastname" class="w-full block mb-2 text-md font-medium text-gray-900">Last name <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="pickup-field-lastname" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="last_name"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="pickup-field-phonenumber" class="w-full block mb-2 text-md font-medium text-gray-900">Phone number <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="pickup-field-phonenumber" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="phone_number"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="pickup-field-arn" class="w-full block mb-2 text-md font-medium text-gray-900">Arn <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="number" 
+                                    id="pickup-field-arn" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="arn_delivery"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="pickup-field-message" class="w-full block mb-2 text-md font-medium text-gray-900">Message Related to your purchase</label>
+                                <textarea 
+                                    name="message" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500" 
+                                    cols="30" 
+                                    rows="10"
+                                    id="message"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div class="w-full flex-wrap my-3" id="delivery-fields" style="display: none;">
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-firstname" class="w-full block mb-2 text-md font-medium text-gray-900">First name <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="delivery-firstname" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="first_name"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-lastname" class="w-full block mb-2 text-md font-medium text-gray-900">Last name <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="delivery-lastname" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="last_name"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-address" class="w-full block mb-2 text-md font-medium text-gray-900">Delivery address <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="delivery-address" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="delivery_address"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-country" class="w-full block mb-2 text-md font-medium text-gray-900">Country <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="delivery-country" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="country"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-state" class="w-full block mb-2 text-md font-medium text-gray-900">State <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="delivery-state" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="state"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-phonenumber" class="w-full block mb-2 text-md font-medium text-gray-900">Phone number <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="text" 
+                                    id="delivery-phonenumber" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="phone_number"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="delivery-arn" class="w-full block mb-2 text-md font-medium text-gray-900">Arn <span class="text-[#f00] text-md">*</span></label>
+                                <input 
+                                    type="number" 
+                                    id="delivery-arn" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"
+                                    name="arn_delivery"
+                                >
+                            </div>
+                            <div class="w-full px-2 flex flex-wrap mb-2">
+                                <label for="message" class="w-full block mb-2 text-md font-medium text-gray-900">Message Related to your purchase</label>
+                                <textarea 
+                                    name="message" 
+                                    class="block w-full max-w-[450px] p-2 text-gray-900 border border-gray-300 bg-white sm:text-xs focus:ring-blue-500 focus:border-blue-500"  
+                                    cols="30" 
+                                    rows="10"
+                                    id="message"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-center md:justify-start px-2">
+                            <input type="submit" value="Set order" class="w-8/12 text-center py-3 bg-[#f00] text-white hover:bg-blue-500 font-bold max-w-[200px]">
+                        </div>
+                    </form>
+                </div>
+                
+            </div>
+            <div class="w-full md:w-4/12 bg-[#f1f1f1] mx-1 p-3 font-semibold mb-8 mt-3 md:mt-0">
+                <div class="w-full px-3 pb-3">
+                    <h2 class="text-xl md:text-2xl">Purchase Summary</h2>
+                </div>
+                <div class="w-full flex flex-wrap px-3">
+                    <div th:each="cart_item: ${cart_items}" class="w-full flex flex-wrap border-b-2 border-neutral-400 mb-1">
+                        <div class="w-full font-bold">
+                            <span th:text="${#strings.length(cart_item.product.name) > 30 ? #strings.substring(cart_item.product.name, 0, 30) + '...' : cart_item.product.name}"></span>
+                        </div>
+                        <div class="w-full my-2 flex flex-wrap">
+                            <div class="w-full my-2 flex flex-wrap">
+                                <div class="w-6/12 mb-1" th:if="${cart_item.product.ram_option == 1}">
+                                    <p>
+                                        <span class="font-semibold text-md">Ram: </span> <span th:text="${cart_item.ram.value}"></span>
+                                    </p>
+                                </div>
+                                <div class="w-6/12 mb-1" th:if="${cart_item.product.storage_option == 1}">
+                                    <p>
+                                        <span class="font-semibold text-md">Storage: </span> <span th:text="${cart_item.storage.value}"></span>
+                                    </p>
+                                </div>
+                                <div class="w-full mb-1">
+                                    <p>
+                                        <span class="font-semibold text-md">Color: </span> <span th:text="${cart_item.color.name}"></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-end mb-1">
+                            <p th:text="'$'+${cart_item.subTotal}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full my-2 px-3">
+                    <h3 class="text-lg font-semibold">Select a shipping type:</h3>
+                </div>
+                <div class="w-full my-3 flex justify-between px-3 flex-wrap">
+                    <div class="w-6/12 flex justify-start mb-2">
+                        Subtotal:
+                    </div>
+                    <div class="w-6/12 flex justify-end mb-2">
+                        $<span th:text="${cart.total}" id="sub-total"></span>
+                    </div>
+                    <div class="w-6/12 flex justify-start">
+                        Delivery:
+                    </div>
+                    <div class="w-6/12 flex justify-end">
+                        <span id="delivery-cost">$0.00</span>
+                    </div>
+                    <hr class="py-2 my-3 w-full">
+                    <div class="w-6/12 flex justify-start">
+                        Total:
+                    </div>
+                    <div class="w-6/12 flex justify-end">
+                        $<span id="order-cost" th:text="${cart.total}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="flex justify-center py-10 bg-[#f1f1f1] text-black mt-auto">
+        <p class="font-bold">© 2023 Ricardo Sandoval</p>
+    </footer>
+    <script th:src="@{/js/flowbite.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
+

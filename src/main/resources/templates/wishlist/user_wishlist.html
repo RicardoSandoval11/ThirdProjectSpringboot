@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Ecommerce | My wishlist</title>
+</head>
+<body class="flex flex-col h-screen">
+    <header th:insert="~{fragments/header :: header }"></header>
+    <div th:insert="~{fragments/sub_header :: sub_header }"></div>
+        <div class="w-full max-w-[1400px] mx-auto flex flex-wrap justify-center lg:justify-between mt-4 md:mt-8">
+            <div class="w-full lg:w-2/12 bg-[#f1f1f1] rounded-md flex flex-col items-start justify-between" style="height: 240px;">
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/account/my-account}" class="font-semibold text-md">My account</a>
+                </div>
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/order/my-orders}" class="font-semibold text-md">My orders</a>
+                </div>
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/wishlist/my-wishlist}" class="font-semibold text-md">My wishlist</a>
+                </div>
+                <div class="w-full px-2 py-4 flex items-center account-links hover:bg-neutral-300 rounded-md">
+                    <a th:href="@{/account/update-information}" class="font-semibold text-md">Account information</a>
+                </div>
+            </div>
+            <div class="w-full lg:w-9/12 mt-6 lg:mt-0">
+                <div class="w-full flex mb-3 justify-center md:justify-start">
+                    <h1 class="text-2xl md:text-3xl font-semibold">My wishlist</h1>
+                </div>
+                <div class="w-full flex flex-wrap" th:if="${wishlist != null}">
+                    <div class="w-full flex flex-wrap" th:if="${wishlistItems.hasContent()}">
+                        <div class="flex flex-wrap w-full">
+                            <div class="w-full flex justify-between">
+                                <div class="w-3/12 md:w-6/12 border-b-2 border-[#f1f1f1]"><h2 class="font-lg font-semibold text-center">Product</h2></div>
+                                <div class="w-3/12 md:w-2/12 border-b-2 border-[#f1f1f1]"><h2 class="font-lg font-semibold text-center">Status</h2></div>
+                                <div class="w-3/12 md:w-2/12 border-b-2 border-[#f1f1f1]"><h2 class="font-lg font-semibold text-center">Action</h2></div>
+                                <div class="w-3/12 md:w-2/12 border-b-2 border-[#f1f1f1]"><h2 class="font-lg font-semibold text-center">Remove</h2></div>
+                            </div>
+                            <div class="w-full">
+                                <div th:each="item: ${wishlistItems}" class="w-full flex">
+                                    <div class="w-3/12 md:w-6/12 flex items-center justify-between">
+                                        <img 
+                                            th:src="@{/products-imgs/{img} (img=${item.product.image1})}" 
+                                            th:alt="${item.product.name}"
+                                            class="w-[150px] h-auto"
+                                        >
+                                        <div class="w-6/12 prod-wishlist">
+                                            <span th:text="${item.product.name}"></span>
+                                        </div>
+                                    </div>
+                                    <div class="w-3/12 md:w-2/12 flex justify-center items-center">
+                                        <div th:if="${item.product.stock > 0}" class="rounded-md px-2 py-1" style="background-color:#76E209;">
+                                            <span class="text-white font-semibold">Available</span>
+                                        </div>
+                                        <div th:unless="${item.product.stock > 0}" class="rounded-md px-2 py-1" style="background-color:#f00;">
+                                            <span class="text-white font-semibold">Out of stock</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-3/12 md:w-2/12 flex justify-center items-center">
+                                        <button 
+                                            class="bg-[#f00] hover:bg-blue-600 rounded-md text-white text-center px-2 py-1 font-bold add-cart-btn" 
+                                            th:id="${'btn-'+item.product.id}"
+                                            th:if="${item.product.stock > 0}"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                        <a 
+                                            th:href="@{/products/all-products(filter_by=category, value=${item.product.category.id})}"
+                                            class="rounded-md px-2 py-1 text-white"
+                                            style="background-color: rgb(0, 89, 255);"
+                                            th:unless="${item.product.stock > 0}"
+                                        >
+                                            View related products
+                                        </a>
+                                    </div>
+                                    <div class="w-3/12 md:w-2/12 flex justify-center items-center">
+                                        <form th:action="@{/wishlist/delete-product}" method="post">
+                                            <input type="hidden" name="wishlistItemId" th:value="${item.id}">
+                                            <button type="submit">
+                                                <img th:src="@{/imgs/compartimiento.png}" alt="remove-item" class="w-[30px] h-[30px]">
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div 
+                                        class="absolute w-full h-full bg-black bg-opacity-20 top-0 left-0 z-30 flex flex-col items-center options-select"
+                                        th:id="${'opt-'+item.product.id}"
+                                        style="display: none;"
+                                    >
+                                        <div class="flex bg-white z-50 rounded-md p-3 transition-display duration-500 ease-in-out form-options">
+                                            <form th:action="@{/cart/add-product}" method="post" th:id="${'add-cart-form-'+item.product.id}">
+                                                <div 
+                                                    class="w-full my-4 rounded-md border-2 border-red-600 bg-red-200 text-red-600 p-2" 
+                                                    style="display: none;"
+                                                    th:id="${'product-options-alert-'+item.product.id}"
+                                                >
+                                                    Select an option
+                                                </div>
+                                                <div class="w-full mt-2" th:if="${item.product.ram_option == 1}">
+                                                    <div class="w-full">
+                                                        <h2 class="text-lg font-semibold">Ram options</h2>
+                                                    </div>
+                                                    <div class="w-full flex flex-wrap justify-around my-3">
+                                                        <div 
+                                                            th:each="opt_ram: ${item.product.ram_options}" 
+                                                            th:class="${'border-2 border-[#f1f1f1] px-2 py-1 text-center hover:bg-[#f00] hover:text-white font-semibold cursor-pointer ram-options-'+item.product.id}"
+                                                            th:id="${opt_ram.id}"
+                                                        >
+                                                            <span th:text="${opt_ram.value}"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full mt-2" th:if="${item.product.storage_option == 1}">
+                                                    <div class="w-full">
+                                                        <h2 class="text-lg font-semibold">Storage options</h2>
+                                                    </div>
+                                                    <div class="w-full flex flex-wrap justify-around my-3">
+                                                        <div 
+                                                            th:each="opt_strg: ${item.product.storage_options}" 
+                                                            th:class="${'border-2 border-[#f1f1f1] px-2 py-1 text-center hover:bg-[#f00] hover:text-white font-semibold cursor-pointer storage-options-'+item.product.id}"
+                                                            th:id="${opt_strg.id}"
+                                                        >
+                                                            <span th:text="${opt_strg.value}"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full mt-2" th:unless="${#lists.isEmpty(item.product.color_options)}">
+                                                    <div class="w-full">
+                                                        <h2 class="text-lg font-semibold">Colors</h2>
+                                                    </div>
+                                                    <div class="w-full flex flex-wrap justify-around my-3">
+                                                        <div 
+                                                            th:each="opt_color: ${item.product.color_options}" 
+                                                            th:class="${'border-2 border-[#f1f1f1] px-2 py-1 text-center hover:bg-[#f00] hover:text-white font-semibold cursor-pointer color-options-'+item.product.id}"
+                                                            th:id="${opt_color.id}"
+                                                        >
+                                                            <span th:text="${opt_color.name}"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr class="w-full py-2 mt-2">
+                                                <div class="w-full flex flex-wrap justify-between my-2">
+                                                    <select 
+                                                        th:if="${item.product.ram_option == 1}" 
+                                                        name="ram_option" 
+                                                        th:id="${'ram-select-'+item.product.id}" 
+                                                        class="hidden"
+                                                    >
+                                                        <option th:each="opt_ram: ${item.product.ram_options}" th:value="${opt_ram.id}"></option>
+                                                    </select>
+                                                    <select 
+                                                        th:if="${item.product.storage_option == 1}" 
+                                                        name="storage_option" 
+                                                        th:id="${'storage-select-'+item.product.id}" 
+                                                        class="hidden"
+                                                    >
+                                                        <option th:each="opt_strg: ${item.product.storage_options}" th:value="${opt_strg.id}" ></option>
+                                                    </select>
+                                                    <select 
+                                                        th:unless="${#lists.isEmpty(item.product.color_options)}" 
+                                                        name="color_option" 
+                                                        th:id="${'color-select-'+item.product.id}" 
+                                                        class="hidden"
+                                                    >
+                                                        <option th:each="opt_color: ${item.product.color_options}" th:value="${opt_color.id}"></option>
+                                                    </select>
+                                                </div>
+                                                <div class="w-full mt-2 flex flex-wrap items-center">
+                                                    <div class="w-6/12 mb-3 flex items-center">
+                                                        <h3 class="text-lg font-semibold">Amount:</h3>
+                                                    </div>
+                                                    <div class="w-6/12 mt-1 flex justify-end items-center">
+                                                        <input type="number" min="1" value="1" name="amount" id="amount" class="w-5/12 rounded-xl border-[#dadada] text-neutral-500 mr-1">
+                                                    </div>
+                                                    <div class="w-full flex justify-end mt-4">
+                                                        <input type="hidden" name="product_id" th:value="${item.product.id}">
+                                                        <input 
+                                                            type="submit" 
+                                                            value="Add to cart" 
+                                                            class="w-5/12 px-6 py-2 rounded-md bg-[#f00] text-white hover:bg-blue-500 ml-1 font-bold text-md text-center"
+                                                        >
+                                                        <button
+                                                            class="w-[80px] bg-white py-2 rounded-md text-black hover:bg-blue-500 ml-1 hover:text-white font-bold text-md text-center closeOptMenu-btn"
+                                                            th:id="${'close-'+item.product.id}"
+                                                            type="button"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="w-full m-3 justify-center" id="error-alert" style="display: none;">
+                                                    <div class="w-10/12 border-2 border-[#f00] bg-[#FDD2D2] text-[#f00] rounded-md px-2 py-1">
+                                                        Ram, color and storage options are required
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full my-4 flex justify-center">
+                            <nav th:if="${wishlistItems.totalPages > 1}" aria-label="Page navigation example" class="w-full flex justify-center">
+                                <ul class="flex w-full justify-center">
+                                    <li class="page-item" th:classappend="${wishlistItems.number == 0 ? 'hidden' : ''}">
+                                        <a 
+                                            th:href="${'/wishlist/my-wishlist?page='+{wishlistItems.number - 1}}" 
+                                            class="border-2 border-black text-black bg-white hover:bg-[#f00] hover:text-white hover:border-[#f00] m-1 px-2 py-1 md:px-4 md:py-2 text-center rounded-md font-bold"
+                                        >
+                                            Previous
+                                        </a>
+                                    </li>
+                                                
+                                    <li class="page-item" th:each="i : ${#numbers.sequence( 1, wishlistItems.totalPages, 1)}">
+                                        <a 
+                                            class="font-bold border-2 px-2 py-1 md:px-4 md:py-2 rounded-md m-1" 
+                                            th:href="${'/wishlist/my-wishlist?page=' + {i-1} }" 
+                                            th:text="${i}" 
+                                            th:title="${'Page '+ i}" 
+                                            data-toggle="tooltip"
+                                            th:classappend="${i eq wishlistItems.number + 1 ? 'bg-[#f00] text-white border-[#f00] disabled' : 'border-black text-black bg-white hover:bg-[#f00] hover:text-white hover:border-[#f00]'}"
+                                        >
+                                        </a>  
+                                    </li>
+                                    <li class="page-item" th:classappend="${wishlistItems.number == (wishlistItems.totalPages - 1) ? 'hidden' : ''}">
+                                        <a 
+                                            th:href="${'/wishlist/my-wishlist?page='+{wishlistItems.number + 1}}" 
+                                            class="border-2 border-black text-black bg-white hover:bg-[#f00] hover:text-white hover:border-[#f00] px-2 py-1 md:px-4 md:py-2 text-center rounded-md font-bold"
+                                        >
+                                            Next
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="w-full flex mt-6 justify-center" th:unless="${wishlistItems.hasContent()}">
+                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+                            <p class="font-bold">No products added</p>
+                            <p>You don't have products in your wishlist yet.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full flex mt-6 justify-center" th:unless="${wishlist != null}">
+                    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+                        <p class="font-bold">No products added</p>
+                        <p>You don't have products in your wishlist yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <footer class="flex justify-center py-10 bg-[#f1f1f1] text-black mt-auto">
+        <p class="font-bold">© 2023 Ricardo Sandoval</p>
+    </footer>
+    <script th:src="@{/js/flowbite.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
+

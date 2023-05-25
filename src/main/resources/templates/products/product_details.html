@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Ecommerce | Product details</title>
+</head>
+<body class="flex flex-col h-screen">
+    <header th:insert="~{fragments/header :: header }"></header>
+    <div th:insert="~{fragments/sub_header :: sub_header }"></div>
+    <div class="w-full max-w-[1400px] mx-auto flex flex-wrap mt-4 md:mt-8">
+        <div class="w-full lg:w-7/12 flex flex-wrap flex-col items-start">
+            <div th:if="${product.isOffer == 1}" class="border-[#e47989] border-2 bg-[#fdf2f4] text-[#cb001f] m-2 rounded-md absolute px-6 py-2 z-20">Offer</div>
+            <div class="w-full">
+                <img th:src="@{/products-imgs/{img} (img=${product.image1})}" th:alt="${product.name}" class="w-10/12 mx-auto h-auto animate__animated animate__fadeIn animate__faster" id="principal-img">
+            </div>
+            <div class="w-full flex justify-center mt-3">
+                <div class="w-3/12 p-1 border-2 border-[#f00]" th:if="${product.image1 != null}">
+                    <img th:src="@{/products-imgs/{img} (img=${product.image1})}" th:alt="${product.name}" class="w-full h-auto cursor-pointer" id="item-img">
+                </div>
+                <div class="w-3/12 p-1" th:if="${product.image2 != null}">
+                    <img th:src="@{/products-imgs/{img} (img=${product.image2})}" th:alt="${product.name}" class="w-full h-auto cursor-pointer opacity-50" id="item-img">
+                </div>
+                <div class="w-3/12 p-1" th:if="${product.image3 != null}">
+                    <img th:src="@{/products-imgs/{img} (img=${product.image3})}" th:alt="${product.name}" class="w-full h-auto cursor-pointer opacity-50" id="item-img">
+                </div>
+                <div class="w-3/12 p-1" th:if="${product.image4 != null}">
+                    <img th:src="@{/products-imgs/{img} (img=${product.image4})}" th:alt="${product.name}" class="w-full h-auto cursor-pointer opacity-50" id="item-img">
+                </div>
+            </div>
+        </div>
+        <div class="w-full lg:w-5/12 flex flex-wrap flex-col items-start px-1">
+            <div class="w-full flex justify-start mb-3 mt-3 md:mt-0">
+                <div class="w-3/12">
+                    <img th:src="@{/brand-imgs/{img} (img=${product.brand.logo})}" th:alt="${product.brand.name}">
+                </div>
+                <div class="w-9/12 mt-3" sec:authorize="isAuthenticated()">
+                    <form class="w-full flex justify-end px-4" method="post" th:action="@{/wishlist/add-product}">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <button type="submit" style="margin-right: 15px;">
+                            <img 
+                                th:src="@{/imgs/corazon.png}" 
+                                alt="Add favorite"
+                                class="w-[40px] h-[40px]"
+                            >
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="w-full">
+                <h1 class="text-xl md:text-2xl font-semibold" th:text="${product.name}"></h1>
+            </div>
+            <div class="w-full mt-2">
+                <span class="text-[#1CAB20] font-semibold text-md" th:if="${product.stock > 0}">Available</span>
+                <span class="text-[#f00] font-semibold text-md" th:unless="${product.stock > 0}">Out of stock</span>
+            </div>
+            <div class="w-full mt-2">
+                <div class="w-full">
+                    <h2 class="text-xl font-semibold">Description</h2>
+                </div>
+                <div class="w-full">
+                    <p class="text-left" th:text="${product.description}"></p>
+                </div>
+            </div>
+            <div class="w-full mt-2">
+                <div class="w-full my-3" th:if="${product.stock > 0}">
+                    <form th:action="@{/cart/add-product}" method="post" id="add-cart-form">
+                        <div 
+                            class="w-full my-4 rounded-md border-2 border-red-600 bg-red-200 text-red-600 p-2" 
+                            style="display: none;"
+                            id="product-options-alert"
+                        >
+                            Select an option
+                        </div>
+                        <div class="w-full mt-2" th:if="${product.ram_option == 1}">
+                            <div class="w-full">
+                                <h2 class="text-lg font-semibold">Ram options</h2>
+                            </div>
+                            <div class="w-full flex flex-wrap justify-around my-3">
+                                <div 
+                                    th:each="opt_ram: ${product.ram_options}" 
+                                    class="border-2 border-[#f1f1f1] px-2 py-1 text-center hover:bg-[#f00] hover:text-white font-semibold cursor-pointer ram-options"
+                                    th:id="${opt_ram.id}"
+                                >
+                                    <span th:text="${opt_ram.value}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full mt-2" th:if="${product.storage_option == 1}">
+                            <div class="w-full">
+                                <h2 class="text-lg font-semibold">Storage options</h2>
+                            </div>
+                            <div class="w-full flex flex-wrap justify-around my-3">
+                                <div 
+                                    th:each="opt_strg: ${product.storage_options}" 
+                                    class="border-2 border-[#f1f1f1] px-2 py-1 text-center hover:bg-[#f00] hover:text-white font-semibold cursor-pointer storage-options"
+                                    th:id="${opt_strg.id}"
+                                >
+                                    <span th:text="${opt_strg.value}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full mt-2" th:unless="${#lists.isEmpty(product.color_options)}">
+                            <div class="w-full">
+                                <h2 class="text-lg font-semibold">Colors</h2>
+                            </div>
+                            <div class="w-full flex flex-wrap justify-around my-3">
+                                <div 
+                                    th:each="opt_color: ${product.color_options}" 
+                                    class="border-2 border-[#f1f1f1] px-2 py-1 text-center hover:bg-[#f00] hover:text-white font-semibold cursor-pointer color-options"
+                                    th:id="${opt_color.id}"
+                                >
+                                    <span th:text="${opt_color.name}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="w-full py-2 mt-2">
+                        <div class="w-full flex flex-wrap justify-between my-2">
+                            <select 
+                                th:if="${product.ram_option == 1}" 
+                                name="ram_option" 
+                                id="ram_option" 
+                                class="hidden"
+                            >
+                                <option th:each="opt_ram: ${product.ram_options}" th:value="${opt_ram.id}"></option>
+                            </select>
+                            <select 
+                                th:if="${product.storage_option == 1}" 
+                                name="storage_option" 
+                                id="storage_option" 
+                                class="hidden"
+                            >
+                                <option th:each="opt_strg: ${product.storage_options}" th:value="${opt_strg.id}" ></option>
+                            </select>
+                            <select 
+                                th:if="${#lists.isEmpty(product.color_options)}" 
+                                name="color_option" 
+                                id="color_option" 
+                                class="hidden"
+                            >
+                            </select>
+                            <select 
+                                th:unless="${#lists.isEmpty(product.color_options)}" 
+                                name="color_option" 
+                                id="color_option" 
+                                class="hidden"
+                            >
+                                <option th:each="opt_color: ${product.color_options}" th:value="${opt_color.id}"></option>
+                            </select>
+                        </div>
+                        <div class="w-full my-2 px-3">
+                            <h3 class="text-lg font-semibold">Select a shipping type:</h3>
+                        </div>
+                        <div class="w-full flex flex-wrap justify-between my-2">
+                            <div 
+                                class="w-full my-4 rounded-md border-2 border-red-600 bg-red-200 text-red-600 p-2" 
+                                style="display: none;"
+                                id="shipping-alert"
+                            >
+                                Select a shipping method
+                            </div>
+                            <div class="w-5/12 mb-2 mx-auto px-3 py-4 rounded-md border-2 border-black hover:border-[#f00] hover:text-[#f00]">
+                                <div class="w-full">
+                                    <h3 class="mb-1 font-md font-semibold flex items-center cursor-pointer" id="pick_store"><span class="material-symbols-outlined mr-2" style="font-size: 25px;">store</span> Store Pickup</h3>
+                                </div>
+                                <div class="w-full">
+                                    <p class="text-sm">You can pick it up at your nearest store</p>
+                                </div>
+                            </div>
+                            <div class="w-5/12 mx-auto p-3 rounded-md border-2 border-black hover:border-[#f00] hover:text-[#f00]">
+                                <div class="w-full">
+                                    <h3 class="mb-1 font-md font-semibold flex items-center cursor-pointer" id="delivery"><span class="material-symbols-outlined mr-2" style="font-size: 25px;">local_shipping</span> Home delivery</h3>
+                                </div>
+                                <div class="w-full">
+                                    <p class="text-sm">1-2 business days in capital, 3-5 business days inside</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full mt-2">
+                            <div class="w-full mb-3">
+                                <h3 class="text-lg font-semibold">Amount:</h3>
+                            </div>
+                            <div class="w-full mt-1 flex">
+                                <input type="hidden" name="product_id" th:value="${product.id}">
+                                <input type="number" min="1" value="1" name="amount" id="amount" class="w-3/12 rounded-xl border-[#dadada] text-neutral-500 mr-1">
+                                <input type="hidden" name="delivery_cost" id="delivery-cost-input">
+                                <select name="delivery_option" id="delivery_option" class="hidden">
+                                    <option value="delivery"></option>
+                                    <option value="pick_store"></option>
+                                </select>
+                                <input 
+                                type="submit" 
+                                value="Add to cart" 
+                                class="w-8/12 max-w-[200px] px-6 py-2 rounded-md bg-[#f00] text-white hover:bg-blue-500 ml-1 font-bold text-md"
+                                >
+                            </div>
+                        </div>
+                        <div class="w-full m-3 justify-center" id="error-alert" style="display: none;">
+                            <div class="w-10/12 border-2 border-[#f00] bg-[#FDD2D2] text-[#f00] rounded-md px-2 py-1">
+                                Ram, color and storage options are required
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="w-full my-8 rounded border-2 border-black">
+            <div class="w-full border-b-2 border-black py-3 px-2">
+                <h4 class="text-lg font-bold text-[#f00]">Specifications</h4>
+            </div>
+            <div class="w-full flex justify-start bg-[#f1f1f1] px-2 py-8">
+                <p th:utext="${product.specifications}"></p>
+            </div>
+        </div>
+    </div> 
+    <footer class="flex justify-center py-10 bg-[#f1f1f1] text-black mt-auto">
+        <p class="font-bold">© 2023 Ricardo Sandoval</p>
+    </footer>
+    <script th:src="@{/js/flowbite.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
+

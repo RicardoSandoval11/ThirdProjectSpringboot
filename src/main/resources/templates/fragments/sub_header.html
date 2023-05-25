@@ -1,0 +1,13 @@
+<div th:fragment="sub_header" class="w-full flex flex-wrap container mx-auto max-w-[1300px] mt-5 items-center">
+    <div class="w-full md:w-8/12 flex justify-center mb-3 md:mb-0 items-center">
+        <form th:action="@{/products/all-products}" method="GET" class="w-full flex justify-center items-center">
+            <input type="hidden" name="filter_by" value="kword">
+            <input type="text" name="value" id="value" class="bg-[#f1f1f1] rounded-lg w-7/12 mr-1 border-2 border-[#f1f1f1] text-neutral-500" placeholder="Search...">
+            <input type="submit" value="Search" class="bg-[#f00] rounded-lg ml-1 w-3/12 text-white px-4 py-2 hover:bg-blue-500">
+        </form>
+    </div>
+    <div class="w-full md:w-4/12 flex justify-center mt-3 md:mt-0 items-center">
+        <a th:href="@{/offers/all-offers}" class="w-4/12 px-4 py-2 bg-black text-white hover:bg-blue-500 rounded-lg mr-1 text-center">Offers</a>
+        <a th:href="@{/order/track-order}" class="w-6/12 px-4 py-2 bg-transparent border-2 border-[#f00] text-[#f00] hover:text-white hover:bg-blue-500 rounded-lg ml-1 hover:border-blue-500 text-center">Track order</a>
+    </div>
+</div>

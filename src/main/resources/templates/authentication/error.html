@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <title>Ecommerce | Invalid Url</title>
+</head>
+<body class="h-full dark:bg-white">
+    <header th:insert="~{fragments/header :: header }"></header>
+    <div class="h-screen flex items-center justify-center">  
+        <div class="p-4 mb-4 text-sm rounded-lg bg-red-600 text-white" role="alert">
+            <span class="font-medium">Invalid Code</span>
+          </div> 
+    </div>
+    <script th:src="@{/js/flowbite.min.js}"></script>
+</body>
+</html>

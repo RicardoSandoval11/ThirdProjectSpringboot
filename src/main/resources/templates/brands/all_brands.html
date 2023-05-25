@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Ecommerce | Brands</title>
+</head>
+<body class="flex flex-col h-screen">
+    <header th:insert="~{fragments/header :: header }"></header>
+    <div th:insert="~{fragments/sub_header :: sub_header }"></div>
+    <div class="w-full max-w-[1400px] mx-auto flex flex-wrap mt-4 md:mt-8">
+        <div class="w-full my-5">
+            <h1 class="text-2xl text-center font-bold">Brands</h1>
+        </div>
+        <div class="w-full flex flex-wrap">
+            <div th:each="brand: ${brands}" class="w-6/12 md:w-1/3 transform hover:translate-y-[-10px] transition duration-300 mt-3 lg:mt-5">
+                <div class="w-full">
+                    <img 
+                        th:src="@{/brand-imgs/{img} (img=${brand.logo})}" 
+                        th:alt="${brand.name}"
+                        class="h-[148px] w-auto rounded-full mx-auto"
+                    >
+                </div>
+                <div class="w-full flex justify-center">
+                    <a th:href="@{/products/all-products(filter_by=brand, value=${brand.id})}">
+                        <h4 th:text="${brand.name}" class="font-bold text-lg text-black hover:text-blue-500"></h4>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <div class="w-full flex flex-wrap mt-auto mb-4">
+        <div class="w-full mt-6 mb-8 flex justify-center">
+            <nav th:if="${brands.totalPages > 1}" aria-label="Page navigation example" class="w-full flex justify-center">
+                <ul class="flex w-full justify-center">
+                    <li class="page-item" th:classappend="${brands.number == 0 ? 'hidden' : ''}">
+                        <a 
+                            th:href="${'/brands/all-brands?page='+{brands.number - 1}}" 
+                            class="border-2 border-black text-black bg-white hover:bg-[#f00] hover:text-white hover:border-[#f00] m-1 px-2 py-1 md:px-4 md:py-2 text-center rounded-md font-bold"
+                        >
+                            Previous
+                        </a>
+                    </li>    
+                    <li class="page-item" th:each="i : ${#numbers.sequence( 1, brands.totalPages, 1)}">
+                        <a 
+                            class="font-bold border-2  px-2 py-1 md:px-4 md:py-2  rounded-md m-1" 
+                            th:href="${'/brands/all-brands?page=' + {i-1} }" 
+                            th:text="${i}" 
+                            th:title="${'Page '+ i}" 
+                            data-toggle="tooltip"
+                            th:classappend="${i eq brands.number + 1 ? 'bg-[#f00] text-white border-[#f00] disabled' : 'border-black text-black bg-white hover:bg-[#f00] hover:text-white hover:border-[#f00]'}"
+                        >
+                        </a>                                
+                    </li>
+                    <li class="page-item" th:classappend="${brands.number == (brands.totalPages - 1) ? 'hidden' : ''}">
+                        <a 
+                            th:href="${'/brands/all-brands?page='+{brands.number + 1}}" 
+                            class="border-2 border-black text-black bg-white hover:bg-[#f00] hover:text-white hover:border-[#f00] px-2 py-1 md:px-4 md:py-2 text-center rounded-md font-bold"
+                        >
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <footer class="flex justify-center py-10 bg-[#f1f1f1] text-black mt-auto">
+        <p class="font-bold">© 2023 Ricardo Sandoval</p>
+    </footer>
+    <script th:src="@{/js/flowbite.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
+
