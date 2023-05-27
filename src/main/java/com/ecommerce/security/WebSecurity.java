@@ -41,7 +41,8 @@ public class WebSecurity {
                                     "/categories/all-categories",
                                     "/brands/all-brands",
                                     "/products/all-products",
-                                    "/advertisements/details/**").permitAll() // public routes
+                                    "/advertisements/details/**",
+                                    "/cart/add-product").permitAll() // public routes
                     .requestMatchers(
                                 "/products/manage-products",
                                             "/products/out-of-stock",
