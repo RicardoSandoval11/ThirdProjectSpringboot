@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +29,7 @@ public class HomeController {
     private IProductService productService;
     
     @GetMapping("/")
-    public String homeView(Authentication authentication, Model model){
+    public String homeView(Model model){
 
         List<Advertisement> advertisements = advertisementService.getMostRecentAdvertisement();
         List<Integer> categoryIds = productService.populatedCategoriesId();
