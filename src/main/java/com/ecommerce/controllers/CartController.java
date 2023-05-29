@@ -64,14 +64,9 @@ public class CartController {
                     RedirectAttributes attributes, 
                     Authentication authentication){
         if(authentication == null){
-            return "redirect:/";
+            return "redirect:/auth/login";
         }
-
-        System.out.println("==========================================");
-        System.out.println(colorId);
-        System.out.println(storageId);
-        System.out.println(ramId);
-
+        
         //  verify if user has a cartshop. If not, create one.
         String email = authentication.getName();
         User user = userService.getUserByEmail(email);
